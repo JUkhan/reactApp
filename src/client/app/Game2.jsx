@@ -3,7 +3,7 @@ import React from 'react';
 class Square extends React.Component {
     constructor() {
         super();
-        this.state = { mode: 0, value: '' }
+        this.state = { mode: 0, value: '', boom:0, won:0 }
     }
     componentDidMount() {
         this.props.squareInfo.ref = this;
@@ -14,8 +14,14 @@ class Square extends React.Component {
         }
         return '';
     }
+    contextMenu(e){
+        e.preventDefault();
+        this.setState({boom:true});
+        console.log('rc');
+    }
     render() {
-        return <button className={this.state.mode ? 'square' : 'square-d'} onClick={() => this.props.onClick()}>
+        return <button  className={(this.state.mode ? 'square ' : 'square-d ')+(this.state.boom?'boom ':'')+(this.state.won?'won ':'')} 
+        onClick={() => this.props.onClick()} onContextMenu={this.contextMenu.bind(this)}>
             {this.getValue()}
         </button>
     }
@@ -57,13 +63,15 @@ class Game2 extends React.Component {
     constructor() {
         super();
         this.state = {
-            squares: this.getInitialSquare()
+            squares: this.getInitialSquare(), status: ''
         };
     }
-    getInitialSquare() {
-        let arr = [], booms = 20, squares = 108, boomObj = {};
-        for (let i = 0; i < squares; i++) {
-            arr.push({ value: 0, visited:false });
+    getInitialSquare(ignoreCreation = false) {
+        let arr =ignoreCreation?this.state.squares:[], booms = 20, squares = 108, boomObj = {};
+        if (!ignoreCreation) {
+            for (let i = 0; i < squares; i++) {
+                arr.push({ value: 0, visited: false });
+            }
         }
         for (let i = 0; i < booms; i++) {
             let boomIndex = Math.round(Math.random() * 107);
@@ -88,11 +96,7 @@ class Game2 extends React.Component {
                 this.setSquareValue(arr, boomIndex + 9, mod);
                 this.setSquareValue(arr, boomIndex - 9, mod);
             }
-
-
         }
-        console.log(boomObj);
-
         return arr;
     }
     setSquareValue(arr, index, mod) {
@@ -111,20 +115,35 @@ class Game2 extends React.Component {
             arr[index - 1].value++;
         }
     }
-    handleClick(i) {
-        console.log(i);
-       
+    calculateWiner(){
+        console.log(this.state.squares.filter(_=>_.ref.state.mode==0).length);
+        return this.state.squares.filter(_=>_.ref.state.mode==0).length==20;
+    }
+    handleClick(i) {       
+        if (this.state.status === 'GAME OVER') return;
         let square = this.state.squares[i];
+        if(square.ref.state.boom){
+            square.ref.setState({boom:0});
+            return;
+        }        
         if (square.value == 0) {
             this.updateSquare(this.state.squares, i)
         }
-         else if (square.value >= 100) {
-            console.log('GAME OVER');
+        else if (square.value >= 100) {
+            this.state.squares.forEach(_ => { if (!_.visited) _.ref.setState({ mode: 1, value: _.value }) });
+            this.setState({ status: 'GAME OVER' });
         }
         else square.ref.setState({ mode: 1, value: square.value });
+        if(this.calculateWiner()){
+            this.state.squares.filter(_=>_.ref.state.mode==0).forEach(_=>{
+                _.ref.setState({mode: 1, boom:0, won:1, value: _.value});
+            });
+             this.setState({ status: 'You WON!' });
+        }
+        
     }
     updateSquare(arr, index) {
-       
+
         let rowNo = parseInt(index / 9), mod = index % 9;
 
         if (rowNo === 0) {
@@ -142,11 +161,11 @@ class Game2 extends React.Component {
         }
 
     }
-    setSquareState(arr, index, ignore=false) {
+    setSquareState(arr, index, ignore = false) {
         if (arr[index].value == 0) {
             arr[index].ref.setState({ mode: 1, value: 0 });
-            if(!ignore &&  !arr[index].visited){
-                arr[index].visited=true;
+            if (!ignore && !arr[index].visited) {
+                arr[index].visited = true;
                 this.updateSquare(arr, index);
             }
         }
@@ -170,7 +189,14 @@ class Game2 extends React.Component {
             this.setSquareState(arr, index - 1);
         }
     }
-
+    startGame() {
+        this.state.squares.forEach(_ => {
+            _.visited = false;
+            _.value=0;
+            _.ref.setState({ mode: 0, value:0, boom:0,won:0 });
+        });
+        this.setState({ squares: this.getInitialSquare(true), status: '' });
+    }
     render() {
 
         return (
@@ -179,29 +205,12 @@ class Game2 extends React.Component {
                     <Board squares={this.state.squares} onClick={this.handleClick.bind(this)} />
                 </div>
                 <div className="game-info">
-                    <div></div>
+                    <div><a href="script:0;" onClick={this.startGame.bind(this)}>Start Game</a></div>
+                    <div>{this.state.status}</div>
                 </div>
             </div>
         );
     }
 }
 export default Game2;
-function calculateWinner(squares) {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
-        }
-    }
-    return null;
-}
+
