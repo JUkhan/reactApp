@@ -16,8 +16,7 @@ class Square extends React.Component {
     }
     contextMenu(e){
         e.preventDefault();
-        this.setState({boom:true});
-        console.log('rc');
+        this.setState({boom:true});       
     }
     render() {
         return <button  className={(this.state.mode ? 'square ' : 'square-d ')+(this.state.boom?'boom ':'')+(this.state.won?'won ':'')} 
@@ -115,8 +114,7 @@ class Game2 extends React.Component {
             arr[index - 1].value++;
         }
     }
-    calculateWiner(){
-        console.log(this.state.squares.filter(_=>_.ref.state.mode==0).length);
+    calculateWiner(){       
         return this.state.squares.filter(_=>_.ref.state.mode==0).length==20;
     }
     handleClick(i) {       
