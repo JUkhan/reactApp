@@ -53,6 +53,19 @@ ol, ul {
   margin-bottom: 10px;
 }
 
+.square-d { 
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+}
+
 .square {
   background: #fff;
   border: 1px solid #999;
@@ -68,7 +81,7 @@ ol, ul {
   width: 34px;
 }
 
-.square:focus {
+.square:focus, .square-d:focus {
   outline: none;
 }
 
