@@ -3,7 +3,7 @@ import React from 'react';
 class Square extends React.Component {
     constructor() {
         super();
-        this.state = { mode: 0, value: '', boom:0, won:0 }
+        this.state = { mode: 0, value: '', boom: 0, won: 0 }
     }
     componentDidMount() {
         this.props.squareInfo.ref = this;
@@ -14,13 +14,13 @@ class Square extends React.Component {
         }
         return '';
     }
-    contextMenu(e){
+    contextMenu(e) {
         e.preventDefault();
-        this.setState({boom:true});       
+        this.setState({ boom: true });
     }
     render() {
-        return <button  className={(this.state.mode ? 'square ' : 'square-d ')+(this.state.boom?'boom ':'')+(this.state.won?'won ':'')} 
-        onClick={() => this.props.onClick()} onContextMenu={this.contextMenu.bind(this)}>
+        return <button className={(this.state.mode ? 'square ' : 'square-d ') + (this.state.boom ? 'boom ' : '') + (this.state.won ? 'won ' : '')}
+            onClick={() => this.props.onClick()} onContextMenu={this.contextMenu.bind(this)}>
             {this.getValue()}
         </button>
     }
@@ -66,7 +66,7 @@ class Game2 extends React.Component {
         };
     }
     getInitialSquare(ignoreCreation = false) {
-        let arr =ignoreCreation?this.state.squares:[], booms = 20, squares = 108, boomObj = {};
+        let arr = ignoreCreation ? this.state.squares : [], booms = 20, squares = 108, boomObj = {};
         if (!ignoreCreation) {
             for (let i = 0; i < squares; i++) {
                 arr.push({ value: 0, visited: false });
@@ -114,16 +114,16 @@ class Game2 extends React.Component {
             arr[index - 1].value++;
         }
     }
-    calculateWiner(){       
-        return this.state.squares.filter(_=>_.ref.state.mode==0).length==20;
+    calculateWiner() {
+        return this.state.squares.filter(_ => _.ref.state.mode == 0).length == 21;
     }
-    handleClick(i) {       
+    handleClick(i) {
         if (this.state.status === 'GAME OVER') return;
         let square = this.state.squares[i];
-        if(square.ref.state.boom){
-            square.ref.setState({boom:0});
+        if (square.ref.state.boom) {
+            square.ref.setState({ boom: 0 });
             return;
-        }        
+        }
         if (square.value == 0) {
             this.updateSquare(this.state.squares, i)
         }
@@ -132,13 +132,14 @@ class Game2 extends React.Component {
             this.setState({ status: 'GAME OVER' });
         }
         else square.ref.setState({ mode: 1, value: square.value });
-        if(this.calculateWiner()){
-            this.state.squares.filter(_=>_.ref.state.mode==0).forEach(_=>{
-                _.ref.setState({mode: 1, boom:0, won:1, value: _.value});
+        if (this.calculateWiner()) {
+            this.state.squares.filter(_ => _.ref.state.mode == 0).forEach(_ => {
+                if (_.value >= 100)
+                    _.ref.setState({ mode: 1, boom: 0, won: 1, value: _.value });
             });
-             this.setState({ status: 'You WON!' });
+            this.setState({ status: 'You WON!' });
         }
-        
+
     }
     updateSquare(arr, index) {
 
@@ -190,8 +191,8 @@ class Game2 extends React.Component {
     startGame() {
         this.state.squares.forEach(_ => {
             _.visited = false;
-            _.value=0;
-            _.ref.setState({ mode: 0, value:0, boom:0,won:0 });
+            _.value = 0;
+            _.ref.setState({ mode: 0, value: 0, boom: 0, won: 0 });
         });
         this.setState({ squares: this.getInitialSquare(true), status: '' });
     }
