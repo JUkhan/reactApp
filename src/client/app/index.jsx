@@ -7,7 +7,7 @@ import Nope from './Nope.jsx';
 import Game from './Game.jsx';
 import Game2 from './Game2.jsx';
 import{DataTable} from './DataTable.jsx';
-import {TableEx} from './TableEx.jsx';
+
 
 class App extends React.Component {
   render () {
@@ -18,8 +18,8 @@ class App extends React.Component {
               <li><Link to="/awesome" activeClassName="active">Awesome</Link></li>
               <li><Link to="/game" activeClassName="active">Game</Link></li> 
               <li><Link to="/game2" activeClassName="active">Game2</Link></li>
-              <li><Link to="/datatable" activeClassName="active">DataTable</Link></li> 
-              <li><Link to="/tableex" activeClassName="active">TableEx</Link></li>                             
+              <li><Link to="/datatable" activeClassName="active">DataTable</Link></li>
+                                         
             </ul>
             <div className="content">
               {this.props.children}
@@ -35,8 +35,7 @@ render(
           <Route path="awesome" component={AwesomeComponent} />  
           <Route path="game" component={Game} /> 
           <Route path="game2" component={Game2} />   
-          <Route path="datatable" component={DataTable} /> 
-          <Route path="tableex" component={TableEx} />         
+          <Route path="datatable" component={DataTable} />                  
           <Route path='*' component={Nope} />
         </Route>
 

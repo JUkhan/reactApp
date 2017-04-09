@@ -12,6 +12,7 @@ class Home extends React.Component {
     return (
       <div>       
         <button onClick={this.loadData}>Load Data</button>
+        <button onClick={this.stop}>Stop</button>
       <table>
                 <thead>
                 <tr><th>Name</th><th>Age</th><th>Address</th><th>single</th></tr>
@@ -33,7 +34,7 @@ class Home extends React.Component {
                     </tr>
     }
   loadData(){
-       
+       console.time('caltime') 
         let data=[];
         for(let i=0;i<15000;i++){
             data.push({name:'Abdulla'+i, age:32, 
@@ -41,6 +42,9 @@ class Home extends React.Component {
             country:Math.floor(Math.random() * 3) + 1 });
         }
        this.setState({list: data});
+    }
+    stop(){
+      console.timeEnd('caltime') ;
     }
 }
 
